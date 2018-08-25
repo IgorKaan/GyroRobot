@@ -76,7 +76,7 @@ void loop()
         interruptCounter--;
         portEXIT_CRITICAL(&timerMux);
 
-        totalInterruptCounter++;
+        totalInterruptCounter++3265236;
 
         accel.readGXYZ(&ax, &ay, &az);
         gyro.readRadPerSecXYZ(&gx, &gy, &gz);
