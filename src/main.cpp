@@ -5,6 +5,10 @@
 #include "math.h"
 #include <I2Cdev.h>
 #include <MotorControl.h>
+#include <MqttClient.h>
+#include <PubSubClient.h>
+#include <stdio.h>
+#include <iostream>
 
 #define Kp  25  /*Too small Kp will cause the robot to fall, because the fix is ​​not enough. 
 Too much Kp forces the robot to go wildly forward and backward.
@@ -23,6 +27,10 @@ Madgwick filter;
 Accelerometer accel;
 Gyroscope gyro;
 MotorControl GyroRobot;
+
+const char* ssid = "SPEECH_405";             
+const char* password = "multimodal";         
+const char* mqtt_server = "192.168.0.128";
 
 float gx, gy, gz, ax, ay, az, roll;
 float fps = 100;
