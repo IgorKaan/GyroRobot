@@ -38,6 +38,9 @@ float fps = 100;
 short motorSpeed = 100;
 short correctMotorSpeed = 200;
 short motorDirectionValue = 0;
+
+short correctValue = 0;
+
 volatile int interruptCounter;
 int totalInterruptCounter = 0;
 
@@ -50,6 +53,7 @@ float error_sum = 0;
 uint8_t topic_id = 5;
 
 String receivedData;
+char outputData[10];
 
 void IRAM_ATTR onTimer() 
 {
@@ -73,7 +77,10 @@ void callback(char* topic, byte* message, unsigned int length)
     for (int i = 0; i < length; i++) 
     {
         receivedData += (char)message[i];
-        Serial.print((char)message[i]);
+        correctValue = atoi(receivedData.c_str());
+        delay(50);
+        Serial.print(correctValue);
+
     } 
     //MESSAGE_IS_REC = true;
 }
@@ -127,8 +134,8 @@ void loop()
             GyroRobot.goForward(motorSpeed);
         }
     }
-    mqtt.initClientLoop();  
-    mqtt.pubFeedback("Hi",topic_id);
-    delay(2000); 
+    mqtt.initClientLoop();
+    itoa(motorDirectionValue, outputData, 10);  
+    mqtt.pubFeedback(outputData,topic_id);
     
 }

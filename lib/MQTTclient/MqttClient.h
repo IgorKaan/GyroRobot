@@ -14,7 +14,7 @@ class mqttClient
         const char* SSID;
         const char* PASSWORD;
         char* MQTT_SERVER;
-        String RECEIVED_DATA;
+        String receivedData;
         bool MESSAGE_IS_REC = false;
 
         mqttClient(const char* ssid, const char* password, const char* mqtt_server);

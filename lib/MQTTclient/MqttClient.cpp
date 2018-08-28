@@ -43,11 +43,11 @@ void mqttClient::subscribe(int platform_id)
     while (!client->connected())
     {
         // Attempt to connect
-        if (client->connect("ESP8266Client"))
+        if (client->connect("ESP32Client"))
         {
             // Subscribe to topic
             client->subscribe(topic);
-            client->publish("Connected11", topic);
+            client->publish("Connected", topic);
         }
         else
         {
