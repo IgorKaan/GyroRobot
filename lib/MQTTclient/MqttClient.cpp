@@ -18,7 +18,7 @@ mqttClient::mqttClient(const char* ssid, const char* password, const char* mqtt_
 }
 
 
-void mqttClient::setup_wifi()
+void mqttClient::setupWifi()
 {
     WiFi.begin(SSID, PASSWORD);    
     delay(500);
@@ -28,7 +28,7 @@ void mqttClient::setup_wifi()
     }    
 }
 
-void mqttClient::init_client_loop()
+void mqttClient::initClientLoop()
 {
     client->loop();
 }
@@ -58,7 +58,7 @@ void mqttClient::subscribe(int platform_id)
 }
 
 
-void mqttClient::pub_feedback(const char* msg, int platform_id)
+void mqttClient::pubFeedback(const char* msg, int platform_id)
 {
     char theme[64];
     char topic[64];
@@ -67,7 +67,12 @@ void mqttClient::pub_feedback(const char* msg, int platform_id)
     client->publish(topic, theme);
 }
 
-void mqttClient::set_callback(void (*callback)(char* topic, byte* message, unsigned int length))
+void mqttClient::setCallback(void (*callback)(char* topic, byte* message, unsigned int length))
 {
     client->setCallback(callback);
+}
+
+void mqttClient:: convertValue(short xValue)
+{
+    
 }

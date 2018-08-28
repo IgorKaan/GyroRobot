@@ -8,7 +8,6 @@
 #include <MqttClient.h>
 #include <PubSubClient.h>
 #include <stdio.h>
-#include <iostream>
 
 #define Kp  25  /*Too small Kp will cause the robot to fall, because the fix is ​​not enough. 
 Too much Kp forces the robot to go wildly forward and backward.
@@ -32,6 +31,8 @@ const char* ssid = "SPEECH_405";
 const char* password = "multimodal";         
 const char* mqtt_server = "192.168.0.128";
 
+mqttClient mqtt(ssid, password, mqtt_server);
+
 float gx, gy, gz, ax, ay, az, roll;
 float fps = 100;
 short motorSpeed = 100;
@@ -45,6 +46,10 @@ float prev_angle = 0;
 float value_of_error;
 float prev_error = 0;
 float error_sum = 0;
+
+uint8_t topic_id = 5;
+
+String receivedData;
 
 void IRAM_ATTR onTimer() 
 {
@@ -63,6 +68,16 @@ void init_Timer()
     timerAlarmEnable(timer);
 }
 
+void callback(char* topic, byte* message, unsigned int length)
+{   
+    for (int i = 0; i < length; i++) 
+    {
+        receivedData += (char)message[i];
+        Serial.print((char)message[i]);
+    } 
+    //MESSAGE_IS_REC = true;
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -71,6 +86,9 @@ void setup()
     accel.begin();
     gyro.begin();
     init_Timer();
+    mqtt.setupWifi();                   
+    mqtt.setCallback(*callback);
+    mqtt.subscribe(topic_id); 
 
 }
 
@@ -109,5 +127,8 @@ void loop()
             GyroRobot.goForward(motorSpeed);
         }
     }
+    mqtt.initClientLoop();  
+    mqtt.pubFeedback("Hi",topic_id);
+    delay(2000); 
     
 }

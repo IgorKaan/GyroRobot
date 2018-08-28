@@ -18,12 +18,14 @@ class mqttClient
         bool MESSAGE_IS_REC = false;
 
         mqttClient(const char* ssid, const char* password, const char* mqtt_server);
-        void setup_wifi();
-        void init_client_loop();
+        void setupWifi();
+        void initClientLoop();
         void subscribe(int platform_id);
-        void pub_msg(const char* msg, int platform_id);
-        void pub_feedback(const char* msg, int platform_id);
-        void set_callback(void (*func)(char* topic, byte* message, unsigned int length));
+        void pubMsg(const char* msg, int platform_id);
+        void pubFeedback(const char* msg, int platform_id);
+        void convertValue(short xValue);
+        void setCallback(void (*func)(char* topic, byte* message, unsigned int length));
+       
 
 };
 
