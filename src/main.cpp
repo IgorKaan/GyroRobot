@@ -38,6 +38,8 @@ float fps = 100;
 short motorSpeed = 100;
 short correctMotorSpeed = 200;
 short motorDirectionValue = 0;
+short xErrorValue;
+short yErrorValue;
 
 short correctValue = 0;
 
@@ -51,8 +53,10 @@ float prev_error = 0;
 float error_sum = 0;
 
 uint8_t topic_id = 5;
+uint8_t splitindex;
 
-String receivedData;
+std::string receivedData;
+std::string valueX, valueY;
 char outputData[10];
 
 void IRAM_ATTR onTimer() 
@@ -77,9 +81,14 @@ void callback(char* topic, byte* message, unsigned int length)
     for (int i = 0; i < length; i++) 
     {
         receivedData += (char)message[i];
-        correctValue = atoi(receivedData.c_str());
-        delay(50);
-        Serial.print(correctValue);
+        //correctValue = atoi(receivedData.c_str());
+        splitindex = receivedData.find("/");
+        valueX = receivedData.substr(0,splitindex);
+        valueY = receivedData.substr(splitindex+1);
+        xErrorValue = atoi(valueX.c_str());
+        yErrorValue = atoi(valueY.c_str());
+        Serial.println(xErrorValue);
+        Serial.println(yErrorValue);
 
     } 
     //MESSAGE_IS_REC = true;
