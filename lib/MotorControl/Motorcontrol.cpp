@@ -1,4 +1,5 @@
 #include "MotorControl.h"
+#include "math.h"
 #include <Arduino.h>
 #include <AX12A.h> 
 
@@ -7,11 +8,6 @@
 #define ID_1 (1u) 
 #define ID_2 (2u) 
 #define ID_3 (3u)
-
-//void MotorControl::MotorControl(){
-//
-//}
-
 
 void MotorControl::enableCentralMotor()
 {
@@ -76,7 +72,43 @@ void MotorControl::stopMovement()
     ax12a.turn(ID_1, RIGHT, 0);
 }
 
-void MotorControl::driveMotor()
+void MotorControl::rotateToAngle(short targetAngle, short wheelRaduis, short robotRadius)
 {
+    rotateAngle = (360*robotRadius*targetAngle)/(2*wheelRaduis*PI);
+    rotateAngle = map(rotateAngle, 0, 300, 0, 1024);
+    if (targetAngle>0)
+    {
+        ax12a.move(ID_3, rotateAngle); 
+        ax12a.move(ID_1, -rotateAngle);
+    }
+    else if (targetAngle<0)
+    {
+        ax12a.move(ID_3, -rotateAngle); 
+        ax12a.move(ID_1, rotateAngle);
+    }
+}
 
+void MotorControl::moveToDistance(short targetAngle, short wheelRaduis, short robotRadius)
+{
+    ax12a.move(ID_3, targetAngle); 
+    ax12a.move(ID_1, targetAngle);
+}
+
+float MotorControl::calculateAngle(short currentXcoordinate, short currentYcoordinate, short currentDirectionVectorXcoordinate, 
+short currentDirectionVectorYcoordinate, short targetXcoordinate, short targetYcoordinate)
+{
+    currentVectorX = currentDirectionVectorXcoordinate-currentXcoordinate;
+    currentVectorY = currentDirectionVectorYcoordinate-currentYcoordinate;
+    targetVectorX = targetXcoordinate-currentXcoordinate;
+    targetVectorY = targetYcoordinate-currentYcoordinate;
+    scalprod = (currentVectorX*targetVectorX + currentVectorY*targetVectorY);
+    mod1 = sqrt(pow(currentVectorX,2)+ pow(currentVectorY,2));
+    mod2 = sqrt(pow(targetVectorX,2)+ pow(targetVectorY,2));
+    targetAngle = acos(scalprod/(mod1*mod2));
+    if ((targetXcoordinate-currentXcoordinate)*(currentDirectionVectorYcoordinate-currentYcoordinate)*(currentDirectionVectorXcoordinate-currentXcoordinate)>0)
+        return targetAngle;
+    else if ((targetXcoordinate-currentXcoordinate)*(currentDirectionVectorYcoordinate-currentYcoordinate)*(currentDirectionVectorXcoordinate-currentXcoordinate)<0)
+        return -targetAngle;
+    else
+        return 0;
 }
